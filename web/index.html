@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magic Cursor</title>
+  <style>
+    :root {
+      --bg: #f6f8fc; --card: #ffffff; --fg: #1f1f1f; --muted: #5f6368; --line: #e3e6ea;
+      --accent: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #131416; --card: #1e1f22; --fg: #e8eaed; --muted: #9aa0a6; --line: #2d2f33; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg);
+           font: 16px/1.65 "Google Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 980px; margin: 0 auto; padding: 48px 16px 120px; }
+    h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -.02em; }
+    h1 span { background: var(--accent); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 0 28px; }
+    .how { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+    .how div { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 14px; }
+    .how b { background: var(--accent); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; }
+    .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+    .mail-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 600; }
+    .mail-head small { display: block; color: var(--muted); }
+    p { margin: 0 0 10px; }
+    .wide { grid-column: 1 / -1; }
+    .products { display: grid; gap: 10px; }
+    .product { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+    .swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+    .swatches div { display: flex; align-items: center; gap: 8px; font-family: ui-monospace, monospace; font-size: 14px; }
+    .swatches i { width: 22px; height: 22px; border-radius: 6px; display: inline-block; }
+    figure { margin: 0; }
+    figure img { width: 100%; border-radius: 14px; display: block; }
+    figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    a { color: #4285f4; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>✦ <span>Magic Cursor</span></h1>
+  <p class="lead">İmleç, üzerindeki içeriği anlar ve ne yapmak istediğini önerir. Tarihler, adresler, telefonlar, fiyatlar, renkler, bağlantılar, görseller ve metinler tanınır.</p>
+  <div class="how">
+    <div><b>1.</b> Fareyi hızla sağa-sola <b>salla</b> (veya Alt+G)</div>
+    <div><b>2.</b> Bir şeyin <b>üzerine gel</b></div>
+    <div><b>3.</b> Basılı tutup bir alanın <b>etrafına daire çiz</b></div>
+    <div><b>Esc</b> ile kapat</div>
+  </div>
+
+  <div class="grid">
+    <article class="card wide">
+      <h2>Gelen kutusu</h2>
+      <div class="mail-head">
+        <div class="avatar">EK</div>
+        <div><b>Elif Kaya</b><small>elif.kaya@ornek.com</small></div>
+      </div>
+      <p>Merhaba, proje lansman toplantısını 14 Kasım 2026 saat 15:30 olarak planladık. Toplantı ofisimizde, Barbaros Bulvarı No: 145, Beşiktaş/İstanbul adresinde olacak.</p>
+      <p>Gelmeden önce beni 0532 123 45 67 numarasından arayabilirsin. Sunum dosyalarını https://example.com/sunum adresine yükledim.</p>
+      <p>Ayrıca ikinci tur değerlendirme 28.11.2026 tarihinde yapılacak. Görüşmek üzere!</p>
+    </article>
+
+    <article class="card">
+      <h2>Makale (English)</h2>
+      <p>The cursor has barely changed in fifty years. It points, it clicks, and it waits for you to tell it what to do.</p>
+      <p>A context-aware pointer flips that relationship: it understands what is underneath it and offers the next step before you ask.</p>
+    </article>
+
+    <article class="card">
+      <h2>Alışveriş listesi</h2>
+      <div class="products">
+        <div class="product"><span>Mekanik klavye</span><span>2.450 TL</span></div>
+        <div class="product"><span>Kablosuz mouse</span><span>$49.99</span></div>
+        <div class="product"><span>USB-C hub</span><span>€35</span></div>
+      </div>
+      <p style="margin-top:12px">Sipariş özeti: destek@magazam.com.tr</p>
+    </article>
+
+    <article class="card">
+      <h2>Renk paleti</h2>
+      <div class="swatches">
+        <div><i style="background:#4285f4"></i>#4285f4</div>
+        <div><i style="background:#9b72cb"></i>#9b72cb</div>
+        <div><i style="background:#d96570"></i>#d96570</div>
+        <div><i style="background:#f9ab00"></i>#f9ab00</div>
+      </div>
+      <p style="margin-top:14px">Kafe: Moda Caddesi No: 12, Kadıköy/İstanbul</p>
+    </article>
+
+    <article class="card">
+      <h2>Görsel</h2>
+      <figure>
+        <img alt="Gün batımında dağlar" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 220'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%234285f4'/%3E%3Cstop offset='.55' stop-color='%239b72cb'/%3E%3Cstop offset='1' stop-color='%23f9ab00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='220' fill='url(%23s)'/%3E%3Ccircle cx='280' cy='130' r='34' fill='%23ffd27a'/%3E%3Cpath d='M0 220 L90 110 L160 170 L240 90 L330 175 L400 130 L400 220Z' fill='%23302a4d'/%3E%3Cpath d='M0 220 L70 160 L150 200 L250 150 L400 210 L400 220Z' fill='%231d1933'/%3E%3C/svg%3E">
+        <figcaption>Görselin üzerine gel → aç, indir.</figcaption>
+      </figure>
+    </article>
+  </div>
+</main>
+<script src="magic-cursor.js"></script>
+</body>
+</html>
