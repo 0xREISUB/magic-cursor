@@ -1,14 +1,15 @@
 """Groq (OpenAI uyumlu) sohbet istemcisi: görsel + konuşma geçmişi, akışlı yanıt."""
 import base64
 import json
-import re
 import urllib.request
 
-from gi.repository import GdkPixbuf, GLib
+from gi.repository import GdkPixbuf
 
 SYSTEM_PROMPT = ('Sen kullanıcının ekranındaki içeriği açıklayan kısa ve net bir asistansın. '
                  'Her zaman Türkçe yanıt ver. Gereksiz giriş cümlesi kurma. '
-                 'Devam sorularında önceki konuşmayı ve ilk görüntüyü bağlam olarak kullan.')
+                 'Devam sorularında önceki konuşmayı ve ilk görüntüyü bağlam olarak kullan. '
+                 'Biçimlendirmeyi sade tut: gerekirse **kalın**, `kod`, kısa madde listeleri ve kod blokları '
+                 'kullan; başlık, tablo ve emoji kullanma. Formülleri düz metinle yaz.')
 
 
 def image_part(pb):
@@ -20,16 +21,6 @@ def image_part(pb):
     if not ok:
         return None
     return {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + base64.b64encode(buf).decode()}}
-
-
-def md_markup(t):
-    """Yanıttaki basit markdown'ı Pango biçimine çevir (**kalın**, `kod`, başlık, madde)."""
-    s = GLib.markup_escape_text(t)
-    s = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', s)
-    s = re.sub(r'`([^`\n]+)`', r'<tt>\1</tt>', s)
-    s = re.sub(r'(?m)^#{1,6}\s*(.+)$', r'<b>\1</b>', s)
-    s = re.sub(r'(?m)^\s*[-*]\s+', '• ', s)
-    return s
 
 
 def groq_stream(cfg, messages, on_chunk):

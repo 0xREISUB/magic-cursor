@@ -7,7 +7,8 @@ from gi.repository import Gdk, GLib, Gtk
 
 from .config import CONFIG_PATH, log
 from .entities import looks_turkish
-from .groq import groq_stream, image_part, md_markup
+from .groq import groq_stream, image_part
+from .markdown import to_pango
 
 
 class ChatMixin:
@@ -31,7 +32,7 @@ class ChatMixin:
         if t.type == 'region':
             prompt = ('Görüntü, kullanıcının ekranından seçtiği bir alan. '
                       + (f'OCR metni (hatalı olabilir): """{t.text[:1500]}"""\n' if t.text else '')
-                      + 'Burada ne olduğunu en fazla 4 kısa cümleyle açıkla. Faydalıysa bir sonraki adımı öner.')
+                      + 'Burada ne olduğunu en fazla 4 kısa cümleyle açıkla.')
         else:
             prompt = (f'Kullanıcı ekranda şu metnin üzerinde (OCR, hatalı olabilir): """{t.text[:1500]}"""\n'
                       'Görüntü metnin çevresini gösteriyor. En fazla 3 kısa cümleyle açıkla veya özetle; '
@@ -41,7 +42,7 @@ class ChatMixin:
         if part:
             content.append(part)
         if self.chat_msgs:  # örn. önce çeviri yapıldıysa açıklamayı aynı sohbete ekle
-            self.add_bubble('q', '✨ Açıkla')
+            self.add_bubble('q', 'Açıklama')
         self.chat_msgs.append({'role': 'user', 'content': content, 'kind': 'explain'})
         self.stream_reply()
 
@@ -58,7 +59,7 @@ class ChatMixin:
         prompt = (f'Aşağıdaki metni {target} diline çevir. Yalnızca çeviriyi yaz; açıklama, giriş cümlesi '
                   'veya tırnak ekleme. Metin OCR ile okundu; bariz okuma hatalarını anlamdan düzelt, '
                   f'kod ve formülleri olduğu gibi bırak.\n"""{text[:4000]}"""')
-        self.add_bubble('q', f'🌐 {target} çeviri')
+        self.add_bubble('q', f'{target} çeviri')
         self.chat_msgs.append({'role': 'user', 'content': prompt})
         self.stream_reply()
 
@@ -109,7 +110,7 @@ class ChatMixin:
         GLib.idle_add(go)
 
     def stream_reply(self):
-        lbl = self.add_bubble('a', '✨ düşünüyor…')
+        lbl = self.add_bubble('a', 'Düşünüyor…')
         self.chat_busy = True
         self.entry.set_sensitive(False)
         panel = self.panel_win
@@ -120,7 +121,7 @@ class ChatMixin:
         def update(final=False):
             if self.panel_win is not panel:
                 return False
-            lbl.set_markup(md_markup(state['text'].strip()) or '✨ düşünüyor…')
+            lbl.set_markup(to_pango(state['text'].strip()) or 'Düşünüyor…')
             self.last_activity = time.time()
             if final:
                 self.chat_busy = False

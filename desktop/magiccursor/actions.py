@@ -70,13 +70,14 @@ def hex_to_rgb(h):
     return f'rgb({(n >> 16) & 255}, {(n >> 8) & 255}, {n & 255})'
 
 
-TYPE_META = {
-    'date': ('📅', 'Tarih'), 'email': ('✉️', 'E-posta'), 'phone': ('📞', 'Telefon'),
-    'address': ('📍', 'Adres'), 'url': ('🔗', 'Bağlantı'), 'price': ('💱', 'Fiyat'),
-    'color': ('🎨', 'Renk'), 'text': ('✦', 'Metin'), 'region': ('◎', 'Seçili alan'),
+TYPE_LABEL = {
+    'date': 'Tarih', 'email': 'E-posta', 'phone': 'Telefon', 'address': 'Adres', 'url': 'Bağlantı',
+    'price': 'Fiyat', 'color': 'Renk', 'text': 'Metin', 'region': 'Seçili alan',
 }
 
 
 class Chip:
+    """Paneldeki bir eylem düğmesi. icon: sistem temasındaki sembolik ikon adı."""
+
     def __init__(self, icon, label, run, primary=False, stay=False):
         self.icon, self.label, self.run, self.primary, self.stay = icon, label, run, primary, stay

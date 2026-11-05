@@ -7,7 +7,7 @@ import urllib.parse
 
 from gi.repository import Gdk, GLib, Gtk
 
-from .actions import TYPE_META, Chip, calendar_url, google, hex_to_rgb, save_ics, speak, xdg_open
+from .actions import TYPE_LABEL, Chip, calendar_url, google, hex_to_rgb, save_ics, speak, xdg_open
 from .entities import clip, find_entities, fmt_date, looks_turkish
 from .widgets import panel_window, prefers_dark
 
@@ -23,21 +23,21 @@ class PanelMixin:
                     c.label = f'{c.label} · {clip(e["text"], 20)}'
                     c.primary = True
                     chips.append(c)
-            chips.append(Chip('✨', 'Yapay zekâya sor', lambda: self.ask_ai(t), primary=True, stay=True))
+            chips.append(Chip('starred-symbolic', 'Yapay zekâya sor', lambda: self.ask_ai(t), primary=True, stay=True))
             if t.text:
                 chips += self.text_chips(t.text)
             if t.image:
-                chips.append(Chip('🖼️', 'Görüntüyü kopyala', lambda: self.copy_image(t.image), stay=True))
-                chips.append(Chip('💾', 'Kaydet', lambda: self.save_image(t.image), stay=True))
-            chips.append(Chip('✕', 'Seçimi kapat', self.release_region, stay=True))
+                chips.append(Chip('image-x-generic-symbolic', 'Görüntüyü kopyala', lambda: self.copy_image(t.image), stay=True))
+                chips.append(Chip('document-save-symbolic', 'Kaydet', lambda: self.save_image(t.image), stay=True))
+            chips.append(Chip('window-close-symbolic', 'Seçimi kapat', self.release_region, stay=True))
             return chips
         if t.type == 'text':
             chips = self.text_chips(t.text)
-            chips.insert(1, Chip('✨', 'Açıkla', lambda: self.ask_ai(t), primary=True, stay=True))
+            chips.insert(1, Chip('starred-symbolic', 'Açıkla', lambda: self.ask_ai(t), primary=True, stay=True))
             w = re.sub(r"^\W+|\W+$", '', t.word)
             if len(w) > 2:
                 q = f'{w} ne demek' if looks_turkish(t.text) else f'{w} meaning'
-                chips.insert(3, Chip('📖', f'“{clip(w, 16)}” ne demek?', lambda: google(q)))
+                chips.insert(3, Chip('accessories-dictionary-symbolic', f'“{clip(w, 16)}” ne demek?', lambda: google(q)))
             return chips
         chips = self.entity_chips(t.entity, t.context)
         if chips:
@@ -46,11 +46,11 @@ class PanelMixin:
 
     def text_chips(self, text):
         return [
-            Chip('📋', 'Kopyala', lambda: self.copy(text), stay=True),
-            Chip('🔍', 'Ara', lambda: google(text)),
-            Chip('🌐', 'İngilizceye çevir' if looks_turkish(text) else 'Türkçeye çevir',
+            Chip('edit-copy-symbolic', 'Kopyala', lambda: self.copy(text), stay=True),
+            Chip('system-search-symbolic', 'Ara', lambda: google(text)),
+            Chip('preferences-desktop-locale-symbolic', 'İngilizceye çevir' if looks_turkish(text) else 'Türkçeye çevir',
                  lambda: self.ai_translate(text), stay=True),
-            Chip('🔊', 'Sesli oku', lambda: speak(text), stay=True),
+            Chip('audio-volume-high-symbolic', 'Sesli oku', lambda: speak(text), stay=True),
         ]
 
     def entity_chips(self, e, context):
@@ -58,34 +58,34 @@ class PanelMixin:
         if typ == 'date':
             title = clip(context.replace(t, ' '), 70) or 'Etkinlik'
             info = e['data']
-            return [Chip('📅', 'Google Takvim’e ekle', lambda: xdg_open(calendar_url(info, title, context))),
-                    Chip('⬇️', '.ics kaydet ve aç', lambda: xdg_open(save_ics(info, title, context))),
-                    Chip('📋', 'Kopyala', lambda: self.copy(fmt_date(info)), stay=True)]
+            return [Chip('x-office-calendar-symbolic', 'Google Takvim’e ekle', lambda: xdg_open(calendar_url(info, title, context))),
+                    Chip('document-save-symbolic', '.ics kaydet ve aç', lambda: xdg_open(save_ics(info, title, context))),
+                    Chip('edit-copy-symbolic', 'Kopyala', lambda: self.copy(fmt_date(info)), stay=True)]
         if typ == 'email':
-            return [Chip('✉️', 'E-posta yaz', lambda: xdg_open('mailto:' + t)),
-                    Chip('📋', 'Adresi kopyala', lambda: self.copy(t), stay=True)]
+            return [Chip('mail-send-symbolic', 'E-posta yaz', lambda: xdg_open('mailto:' + t)),
+                    Chip('edit-copy-symbolic', 'Adresi kopyala', lambda: self.copy(t), stay=True)]
         if typ == 'phone':
             digits = re.sub(r'\D', '', t)
             wa = '90' + digits[1:] if digits.startswith('0') else digits
-            return [Chip('💬', 'WhatsApp', lambda: xdg_open('https://wa.me/' + wa)),
-                    Chip('📞', 'Ara', lambda: xdg_open('tel:' + re.sub(r'[^\d+]', '', t))),
-                    Chip('📋', 'Kopyala', lambda: self.copy(t), stay=True)]
+            return [Chip('mail-unread-symbolic', 'WhatsApp', lambda: xdg_open('https://wa.me/' + wa)),
+                    Chip('call-start-symbolic', 'Ara', lambda: xdg_open('tel:' + re.sub(r'[^\d+]', '', t))),
+                    Chip('edit-copy-symbolic', 'Kopyala', lambda: self.copy(t), stay=True)]
         if typ == 'address':
             q = urllib.parse.quote(t)
-            return [Chip('🗺️', 'Haritada göster', lambda: xdg_open('https://www.google.com/maps/search/?api=1&query=' + q)),
-                    Chip('🧭', 'Yol tarifi', lambda: xdg_open('https://www.google.com/maps/dir/?api=1&destination=' + q)),
-                    Chip('📋', 'Kopyala', lambda: self.copy(t), stay=True)]
+            return [Chip('mark-location-symbolic', 'Haritada göster', lambda: xdg_open('https://www.google.com/maps/search/?api=1&query=' + q)),
+                    Chip('find-location-symbolic', 'Yol tarifi', lambda: xdg_open('https://www.google.com/maps/dir/?api=1&destination=' + q)),
+                    Chip('edit-copy-symbolic', 'Kopyala', lambda: self.copy(t), stay=True)]
         if typ == 'url':
             u = e['data']['url']
-            return [Chip('↗️', 'Aç', lambda: xdg_open(u)), Chip('📋', 'Bağlantıyı kopyala', lambda: self.copy(u), stay=True)]
+            return [Chip('web-browser-symbolic', 'Aç', lambda: xdg_open(u)), Chip('edit-copy-symbolic', 'Bağlantıyı kopyala', lambda: self.copy(u), stay=True)]
         if typ == 'price':
             a, c = e['data']['amount'], e['data']['currency']
             to = 'USD' if c == 'TL' else 'TL'
-            return [Chip('💱', f'{to}’ye çevir', lambda: google(f'{a} {c} kaç {to}')),
-                    Chip('📋', 'Kopyala', lambda: self.copy(t), stay=True)]
+            return [Chip('accessories-calculator-symbolic', f'{to}’ye çevir', lambda: google(f'{a} {c} kaç {to}')),
+                    Chip('edit-copy-symbolic', 'Kopyala', lambda: self.copy(t), stay=True)]
         if typ == 'color':
-            return [Chip('📋', 'HEX kopyala', lambda: self.copy(t), stay=True),
-                    Chip('🎨', 'RGB kopyala', lambda: self.copy(hex_to_rgb(t)), stay=True)]
+            return [Chip('edit-copy-symbolic', 'HEX kopyala', lambda: self.copy(t), stay=True),
+                    Chip('color-select-symbolic', 'RGB kopyala', lambda: self.copy(hex_to_rgb(t)), stay=True)]
         return []
 
     def open_panel(self, t):
@@ -93,7 +93,7 @@ class PanelMixin:
         chips = self.chips_for(t)
         if not chips:
             return
-        icon, label = TYPE_META.get(t.type, TYPE_META['text'])
+        label = TYPE_LABEL.get(t.type, TYPE_LABEL['text'])
         if t.type == 'region':
             preview = f'{len(t.text)} karakter' if t.text else 'görüntü'
         elif t.type == 'date':
@@ -113,9 +113,12 @@ class PanelMixin:
                 sw.set_size_request(12, 12)
                 sw.connect('draw', lambda _w, cr: (cr.set_source_rgba(rgba.red, rgba.green, rgba.blue, 1), cr.paint()))
                 head.pack_start(sw, False, False, 0)
-        hl = Gtk.Label(label=f'{icon}  {label}  ·  {clip(preview, 60)}', xalign=0)
+        kind = Gtk.Label(label=label.upper(), xalign=0)
+        kind.get_style_context().add_class('mc-kind')
+        head.pack_start(kind, False, False, 0)
+        hl = Gtk.Label(label=clip(preview, 60), xalign=0)
         hl.set_ellipsize(3)
-        hl.set_max_width_chars(60)
+        hl.set_max_width_chars(56)
         hl.get_style_context().add_class('mc-head')
         head.pack_start(hl, True, True, 0)
         card.pack_start(head, False, False, 0)
@@ -127,7 +130,12 @@ class PanelMixin:
         flow.set_row_spacing(6)
         flow.set_column_spacing(6)
         for c in chips:
-            b = Gtk.Button(label=f'{c.icon} {c.label}')
+            b = Gtk.Button()
+            inner = Gtk.Box(spacing=6)
+            if c.icon:
+                inner.pack_start(Gtk.Image.new_from_icon_name(c.icon, Gtk.IconSize.MENU), False, False, 0)
+            inner.pack_start(Gtk.Label(label=c.label), False, False, 0)
+            b.add(inner)
             b.set_relief(Gtk.ReliefStyle.NONE)
             ctx = b.get_style_context()
             ctx.add_class('mc-chip')
@@ -185,12 +193,14 @@ class PanelMixin:
         win.resize(pw, ph)
         win.move(int(x), int(y))
         self.panel_geom = (int(x), int(y), pw, ph)
+        self.highlight.set_cutout(self.panel_geom)
         self.selector.update_holes()
 
     def close_panel(self):
         if self.panel_win:
             self.panel_win.destroy()
             self.panel_geom = None
+            self.highlight.set_cutout(None)
             self.selector.update_holes()
         self.panel_win = None
         self.panel_target = None

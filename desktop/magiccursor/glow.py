@@ -28,6 +28,7 @@ class CursorGlow:
         self.win.connect('draw', self.draw)
         self.win.connect('realize', lambda w: w.input_shape_combine_region(cairo.Region()))
         self.t0 = 0.0
+        self.running = self.suppressed = False
         self.swinging = False
         self.frame = 0
         try:
@@ -48,6 +49,7 @@ class CursorGlow:
     def start(self, x, y, swing=True):
         self.follow(x, y)
         self.t0 = time.time()
+        self.running, self.suppressed = True, False
         self.win.show()
         if swing and self.app.xcursor.dpy:
             self.swinging = True
@@ -58,7 +60,15 @@ class CursorGlow:
         if self.swinging:
             self.swinging = False
             self.app.xcursor.show()
+        self.running = False
         self.win.hide()
+
+    def suppress(self, on):
+        """Panel veya durum çubuğunun üzerindeyken ışıltıyı gizle (onların üstüne çizilmesin)."""
+        if on == self.suppressed or not self.running or self.swinging:
+            return
+        self.suppressed = on
+        self.win.hide() if on else self.win.show()
 
     def follow(self, x, y):
         self.win.move(int(x - self.S / 2), int(y - self.S / 2))

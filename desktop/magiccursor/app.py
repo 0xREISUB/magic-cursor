@@ -133,6 +133,7 @@ class MagicCursor(PanelMixin, ChatMixin):
             self.last_activity = t
             self.glow.follow(x, y)
             self.handle_pointer(x, y, t)
+        self.glow.suppress(self.over_own(x, y))
         self.glow.tick()
         if self.pending and t >= self.pending[1]:
             tgt = self.pending[0]
