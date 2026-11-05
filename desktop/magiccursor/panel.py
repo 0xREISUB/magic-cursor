@@ -7,8 +7,7 @@ import urllib.parse
 
 from gi.repository import Gdk, GLib, Gtk
 
-from .actions import (TYPE_META, Chip, calendar_url, google, hex_to_rgb, save_ics, speak,
-                      translate, xdg_open)
+from .actions import TYPE_META, Chip, calendar_url, google, hex_to_rgb, save_ics, speak, xdg_open
 from .entities import clip, find_entities, fmt_date, looks_turkish
 from .widgets import panel_window, prefers_dark
 
@@ -49,7 +48,8 @@ class PanelMixin:
         return [
             Chip('📋', 'Kopyala', lambda: self.copy(text), stay=True),
             Chip('🔍', 'Ara', lambda: google(text)),
-            Chip('🌐', 'İngilizceye çevir' if looks_turkish(text) else 'Türkçeye çevir', lambda: translate(text)),
+            Chip('🌐', 'İngilizceye çevir' if looks_turkish(text) else 'Türkçeye çevir',
+                 lambda: self.ai_translate(text), stay=True),
             Chip('🔊', 'Sesli oku', lambda: speak(text), stay=True),
         ]
 

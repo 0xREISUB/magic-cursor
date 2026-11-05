@@ -17,11 +17,6 @@ def google(q):
     xdg_open('https://www.google.com/search?q=' + urllib.parse.quote(q))
 
 
-def translate(t):
-    tl = 'en' if looks_turkish(t) else 'tr'
-    xdg_open(f'https://translate.google.com/?sl=auto&tl={tl}&text={urllib.parse.quote(t)}&op=translate')
-
-
 def speak(t):
     subprocess.run(['spd-say', '-C'], stderr=subprocess.DEVNULL)
     subprocess.Popen(['spd-say', '-l', 'tr' if looks_turkish(t) else 'en', t],

@@ -20,7 +20,7 @@ Linux masaüstü için bağlamsal, yapay zekâ destekli imleç. Fareyi sallayın
   | ✉️ E-posta · 🔗 Link | Yaz / aç, kopyala |
   | 💱 Fiyat | Döviz çevirisi |
   | 🎨 Renk kodu | HEX / RGB kopyala |
-  | ✦ Metin | Açıkla (AI), kopyala, ara, çevir, sesli oku, kelimenin anlamı |
+  | ✦ Metin | Açıkla (AI), çevir (AI), kopyala, ara, sesli oku, kelimenin anlamı |
 
 - **Daire çizerek seç:** Mod açıkken sol tıkla basılı tutup bir alanın etrafını dolaş. O alanın metni ve görüntüsüyle işlem yapabilir, yapay zekâya sorabilirsin.
 - **Devam soruları:** Groq (`qwen/qwen3.8-27b`, görsel destekli) yanıtını panelde akışlı olarak gösterir. Altındaki kutudan konuşmaya devam edebilirsin.

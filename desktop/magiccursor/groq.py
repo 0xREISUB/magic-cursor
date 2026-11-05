@@ -36,7 +36,8 @@ def groq_stream(cfg, messages, on_chunk):
     """Groq chat completions (OpenAI uyumlu) — konuşma geçmişiyle akışlı yanıt."""
     body = {
         'model': cfg['groq_model'],
-        'messages': [{'role': 'system', 'content': SYSTEM_PROMPT}] + messages,
+        'messages': [{'role': 'system', 'content': SYSTEM_PROMPT}]
+                    + [{'role': m['role'], 'content': m['content']} for m in messages],
         'stream': True,
         'temperature': 0.3,
         'max_completion_tokens': 400,

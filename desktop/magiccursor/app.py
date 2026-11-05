@@ -98,6 +98,9 @@ class MagicCursor(PanelMixin, ChatMixin):
                     'chat', [(m['role'], str(m['content'])[:200]) for m in self.chat_msgs],
                     'entry', self.entry and self.entry.get_visible(),
                     'focus', self.panel_win and self.panel_win.is_active())
+            elif cmd == 'debug-translate':
+                if self.panel_target:
+                    self.ai_translate(self.panel_target.text)
             elif cmd.startswith('debug-ask '):
                 if self.entry:
                     self.entry.set_text(cmd[len('debug-ask '):])

@@ -6,14 +6,16 @@ import urllib.error
 from gi.repository import Gdk, GLib, Gtk
 
 from .config import CONFIG_PATH, log
+from .entities import looks_turkish
 from .groq import groq_stream, image_part, md_markup
 
 
 class ChatMixin:
     def ask_ai(self, t):
-        if not self.chat_box or self.chat_busy or self.chat_msgs:
-            if self.entry and self.entry.get_visible():
-                self.focus_panel()
+        if not self.chat_box or self.chat_busy:
+            return
+        if any(m.get('kind') == 'explain' for m in self.chat_msgs):
+            self.focus_panel()  # zaten açıklandı → devam sorusu kutusuna odaklan
             return
         self.panel_pinned = True
         if not self.cfg['groq_api_key']:
@@ -38,7 +40,26 @@ class ChatMixin:
         part = image_part(image) if image is not None else None
         if part:
             content.append(part)
-        self.chat_msgs = [{'role': 'user', 'content': content}]
+        if self.chat_msgs:  # örn. önce çeviri yapıldıysa açıklamayı aynı sohbete ekle
+            self.add_bubble('q', '✨ Açıkla')
+        self.chat_msgs.append({'role': 'user', 'content': content, 'kind': 'explain'})
+        self.stream_reply()
+
+    def ai_translate(self, text):
+        """Metni Groq ile çevir; sonuç panelde görünür, ardından devam sorusu sorulabilir."""
+        if not self.chat_box or self.chat_busy:
+            return
+        self.panel_pinned = True
+        if not self.cfg['groq_api_key']:
+            self.add_bubble('a', f'Groq API anahtarı yok.\n{CONFIG_PATH} dosyasına\n{{"groq_api_key": "gsk_..."}}\n'
+                                 'yazıp Magic Cursor\'ı yeniden başlatın.')
+            return
+        target = 'İngilizce' if looks_turkish(text) else 'Türkçe'
+        prompt = (f'Aşağıdaki metni {target} diline çevir. Yalnızca çeviriyi yaz; açıklama, giriş cümlesi '
+                  'veya tırnak ekleme. Metin OCR ile okundu; bariz okuma hatalarını anlamdan düzelt, '
+                  f'kod ve formülleri olduğu gibi bırak.\n"""{text[:4000]}"""')
+        self.add_bubble('q', f'🌐 {target} çeviri')
+        self.chat_msgs.append({'role': 'user', 'content': prompt})
         self.stream_reply()
 
     def on_followup(self, entry):
