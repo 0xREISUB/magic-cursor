@@ -4,7 +4,7 @@ Linux masaüstü için bağlamsal, yapay zekâ destekli imleç. Fareyi sallayın
 
 *A context-aware, AI-assisted pointer for the Linux desktop (X11 / GNOME). Wiggle the mouse, hover anything on screen, get one-click actions or ask an AI about it.*
 
-<p align="center"><img src="docs/screenshot.png" width="480" alt="Seçili bir alan ve yapay zekâ sohbet paneli"></p>
+<p align="center"><img src="docs/screenshot.png" width="860" alt="Bir PDF sayfasında daire çizilerek seçilen alan ve yapay zekânın açıklaması"></p>
 
 ## Özellikler
 
@@ -89,6 +89,26 @@ python3 desktop/magic_cursor.py quit     # kapat
 
 Ortam değişkenleri: `GROQ_API_KEY`, `MAGIC_CURSOR_MODEL`, `MAGIC_CURSOR_WIGGLE=0` (sallamayı kapatır).
 
+### Oyunlar ve tam ekran
+
+Sallamayla açılma şu durumlarda kendiliğinden devre dışı kalır (<kbd>Super</kbd>+<kbd>G</kbd> her zaman çalışır):
+- ön plandaki pencere **tam ekransa** (oyun, video, sunum),
+- pencere bir **oyunsa**: Steam (`steam_app_*`, `reaper`, `pressure-vessel`), Proton/Wine, Lutris, Heroic, gamescope, `.exe` süreçleri ve yaygın emülatörler.
+
+### Ek ayarlar (`config.json`)
+
+```json
+{
+  "groq_api_key": "gsk_...",
+  "block_fullscreen": true,
+  "blocked_apps": ["obs", "blender"],
+  "wiggle": {"stroke_px": 70, "flips": 6, "window_s": 1.0}
+}
+```
+
+- `blocked_apps`: sallamayla açılmasını istemediğin uygulamalar (pencere sınıfı veya süreç adında geçen parça).
+- `wiggle`: sallama hassasiyeti. Daha zor tetiklemek için `stroke_px` ya da `flips` değerini artır, daha kolay tetiklemek için azalt.
+
 ## Nasıl çalışır?
 
 1. Mod açılınca ekranın bir görüntüsü alınır ve Tesseract ile arka planda, düşük öncelikle okunur.
@@ -96,6 +116,29 @@ Ortam değişkenleri: `GROQ_API_KEY`, `MAGIC_CURSOR_MODEL`, `MAGIC_CURSOR_WIGGLE
 3. Her blokta tarih, adres, telefon, fiyat gibi kalıplar düzenli ifadelerle aranır.
 4. Vurgulama, panel ve ışıltı küçük, ayrı pencerelerdir. Ekranı kaplayan tek şey, sürüklemeyi yakalamak için kullanılan şeffaf bir giriş katmanıdır. Bu katmanda panelin ve durum çubuğunun yerinde delik vardır.
 5. Normal tıklamalar XTest ile alttaki uygulamaya yeniden gönderilir. Açılış animasyonunda gerçek imleç XFixes ile kısa süre gizlenir ve yerine sistemin imleç görüntüsü döndürülerek çizilir.
+
+## Proje yapısı
+
+```
+desktop/
+  magic_cursor.py      başlatıcı (install.sh ve kısayol bunu çalıştırır)
+  install.sh / uninstall.sh
+  magiccursor/
+    app.py             ana döngü: imleç takibi, sallama, aç/kapat, tarama, hover, alan seçimi
+    panel.py           öneri paneli ve hedefe göre eylem çipleri
+    chat.py            panel içindeki Groq sohbeti ve devam soruları
+    entities.py        tarih, adres, telefon, e-posta, link, fiyat, renk tanıma
+    ocr.py             Tesseract + ekrana uygun bölümlendirme (satır → blok)
+    actions.py         takvim, harita, çeviri, sesli okuma gibi eylemler
+    groq.py            Groq istemcisi (görsel + konuşma geçmişi, akışlı)
+    glow.py            imleç ışıltısı ve savrulma animasyonu
+    selector.py        daire çizerek seçim için şeffaf giriş katmanı
+    widgets.py         CSS, şeffaf pencereler, vurgulama çerçevesi
+    x11.py             XFixes (imleci gizle) ve XTest (tıklamayı ilet)
+    config.py          sabitler ve ayar dosyası
+    ipc.py / main.py   tek örnek kontrolü, komut satırı
+web/                   tarayıcı sürümü (magic-cursor.js) ve demo
+```
 
 ## Bilinen sınırlamalar
 
@@ -117,3 +160,5 @@ Demo için `web/index.html` dosyasını tarayıcıda aç.
 ## Lisans
 
 [MIT](LICENSE)
+
+Bu proje bağımsız bir açık kaynak çalışmadır. Google LLC ile bağlantılı değildir, Google tarafından desteklenmez ve onaylanmamıştır. Google, Google Takvim, Google Haritalar, Google Çeviri ve Google Lens, Google LLC'nin ticari markalarıdır. Bu projede yalnızca ilgili hizmetlere bağlantı açmak için anılırlar.

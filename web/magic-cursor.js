@@ -1,5 +1,5 @@
 /*!
- * Magic Cursor — Googlebook "Magic Pointer" tarzı bağlamsal imleç.
+ * Magic Cursor — bağlamsal, akıllı imleç.
  * Tek dosya, bağımlılık yok. Sayfaya <script src="magic-cursor.js"></script> ile ekleyin.
  *
  *  - Fareyi hızlıca sağa-sola sallayın (veya Alt+G) → Magic mod açılır
@@ -302,7 +302,7 @@
   @property --mc-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
   .mc-ui { --mc-bg: rgba(255,255,255,.86); --mc-fg: #1f1f1f; --mc-muted: #5f6368; --mc-line: rgba(0,0,0,.08);
            --mc-chip: rgba(0,0,0,.04); --mc-chip-hover: rgba(66,133,244,.12);
-           font-family: "Google Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+           font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   @media (prefers-color-scheme: dark) {
     .mc-ui { --mc-bg: rgba(32,33,36,.88); --mc-fg: #e8eaed; --mc-muted: #9aa0a6; --mc-line: rgba(255,255,255,.1);
              --mc-chip: rgba(255,255,255,.06); --mc-chip-hover: rgba(138,180,248,.18); }
@@ -378,7 +378,7 @@
 
     toggleBtn = document.createElement('button');
     toggleBtn.className = 'mc-toggle mc-ui';
-    toggleBtn.innerHTML = '<span class="mc-star">✦</span><span>Magic Pointer</span><small>salla · Alt+G</small>';
+    toggleBtn.innerHTML = '<span class="mc-star">✦</span><span>Magic Cursor</span><small>salla · Alt+G</small>';
     toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
     document.body.appendChild(toggleBtn);
 
@@ -407,7 +407,7 @@
     document.documentElement.classList.add('mc-active');
     burst(ptr.x, ptr.y, 46);
     rings.push({ x: ptr.x, y: ptr.y, t0: performance.now() });
-    toast('✦ Magic Pointer açık — bir şeyin üzerine gel ya da etrafına daire çiz');
+    toast('✦ Magic Cursor açık — bir şeyin üzerine gel ya da etrafına daire çiz');
     bumpIdle();
     kick();
     if (ptr.inside) updateTarget();
